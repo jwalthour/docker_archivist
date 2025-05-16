@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import logging
+import logging.handlers
 import os
 import shutil
 from typing import List, Optional
@@ -10,7 +11,11 @@ logger = logging.getLogger(__name__)
 
 SYS_SETTINGS_FN = "system_settings.yaml"
 IMAGE_LIST_FN = "image_list.yaml"
-
+LOG_FORMAT = "%(asctime)s %(levelname)s %(message)s"
+LOG_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+LOG_FILENAME = "docker_update.log"
+SINGLE_LOG_MAX_SIZE_B = 10 * 1024 * 1024
+TOTAL_LOG_COUNT = 10
 
 def pull_image(repository: str, tag: Optional[str] = None, platform: Optional[str] = None) -> None:
     try:
@@ -27,22 +32,30 @@ def pull_image(repository: str, tag: Optional[str] = None, platform: Optional[st
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     with open(SYS_SETTINGS_FN) as stream:
-        try:
-            sys_settings = yaml.safe_load(stream)
-        except yaml.YAMLError:
-            sys_settings = {}
-            logger.error(exc_info=True)
+        # Can't set up logging without reading log file location from here.
+        # So don't catch any exceptions, just explode.
+        sys_settings = yaml.safe_load(stream)
+    os.makedirs(sys_settings["log_dir"], exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format=LOG_FORMAT,
+        datefmt=LOG_TIME_FORMAT,
+        handlers=[
+            logging.handlers.RotatingFileHandler(
+                os.path.join(sys_settings["log_dir"], LOG_FILENAME),
+                maxBytes=SINGLE_LOG_MAX_SIZE_B,
+                backupCount=TOTAL_LOG_COUNT,
+            ),
+            logging.StreamHandler(),
+        ],
+    )
     with open(IMAGE_LIST_FN) as stream:
         try:
             image_list = yaml.safe_load(stream)
         except yaml.YAMLError:
             image_list = []
             logger.error(exc_info=True)
-
-    def default_progress(op_code, cur_count, max_count=None, message=""):
-        logger.info(f"Progress: {op_code}, {cur_count}/{max_count}: {message}")
 
     storage_root = sys_settings["storage_root"]
     storage_min_free_space_gb = sys_settings["storage_min_free_space_gb"]
