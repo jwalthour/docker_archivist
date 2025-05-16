@@ -1,0 +1,25 @@
+---
+"Platform bases":
+- repository: "ubuntu"
+  platforms: 
+    - "linux/arm64"
+    - "linux/amd64"
+- repository: "alpine"
+  platforms: 
+    - "linux/arm64"
+    - "linux/amd64"
+"Full applications":
+- repository: "registry"
+"Languages":
+- repository: "python"
+  platforms: 
+    - "linux/arm64"
+    - "windows/arm64"
+    - "linux/amd64"
+"Platforms":
+- repository: "osrf/ros"
+  tag: "humble-desktop"
+  platforms: 
+    - "linux/arm64"
+    - "linux/amd64"
+
