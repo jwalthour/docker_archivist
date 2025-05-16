@@ -10,8 +10,15 @@
     - "linux/amd64"
 "Full applications":
 - repository: "registry"
+- repository: "httpd"
+- repository: "sonarqube"
 "Languages":
 - repository: "python"
+  platforms: 
+    - "linux/arm64"
+    - "windows/arm64"
+    - "linux/amd64"
+- repository: "openjdk"
   platforms: 
     - "linux/arm64"
     - "windows/arm64"
