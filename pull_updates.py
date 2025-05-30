@@ -26,7 +26,8 @@ def pull_image(repository: str, tag: Optional[str] = None, platform: Optional[st
             if "progressDetail" in line and "current" in line["progressDetail"] and "total" in line["progressDetail"]:
                 frac = line["progressDetail"]["current"] / line["progressDetail"]["total"]
                 message += f" {frac * 100:.2f}% done"
-            logger.info(message)
+            logger.debug(message)
+        logger.info(f"Done pulling {repository}:{tag}, platform={platform}.")
     except docker.errors.APIError:
         logger.error(f"Error pulling {repository}:{tag}, platform={platform}:", exc_info=True)
 

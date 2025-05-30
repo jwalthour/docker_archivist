@@ -12,6 +12,7 @@
 - repository: "registry"
 - repository: "httpd"
 - repository: "sonarqube"
+- repository: "jellyfin/jellyfin"
 "Languages":
 - repository: "python"
   platforms: 
